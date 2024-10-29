@@ -1,0 +1,11 @@
+ul{
+    padding: 0px;
+    margin: 16px auto;
+  }
+  
+  
+  
+ li:not(:last-child)
+{
+  border-bottom: 1px solid wheat;
+}

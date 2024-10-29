@@ -1,0 +1,9 @@
+
+
+.box .summary div 
+{
+  display: flex;
+  background-color: #5c5470;
+  justify-content: space-around;
+}
+

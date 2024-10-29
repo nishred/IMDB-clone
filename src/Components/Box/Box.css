@@ -1,0 +1,26 @@
+
+
+.btn-toggle
+{
+  display: block;
+  background-color: #5c5470;
+  color: wheat;
+  border-radius: 50%;
+  border: none;
+  position: absolute;
+  top: 6px;
+  right:  6px;
+}
+
+
+.box {
+
+    width: 0px;
+    flex-grow: 1;
+    background-color: #352f44;
+    color: wheat;
+    border-radius: 8px;
+    position: relative;
+  
+  }
+

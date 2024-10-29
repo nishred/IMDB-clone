@@ -1,0 +1,80 @@
+.movie-card
+{
+
+    display: flex;
+    gap: 16px;
+}
+
+.card 
+{
+    position: relative;
+}
+
+
+.movie-card img{
+ 
+ width: 0px;   
+flex-grow: 2;
+
+}
+
+.movie-details-wrapper
+{
+
+  width: 0px;
+  flex-grow : 3;
+
+}
+
+
+.released-runtime-wrapper {
+
+ display: flex;
+ gap: 16px;
+
+}
+
+
+.add-details
+{
+  padding: 16px;
+  margin-top: 48px;
+
+}
+
+
+.star-rating-component
+{
+   margin-top: 32px;
+
+}
+
+
+.btn-back
+{
+ position: absolute;
+ top : 4px;
+ left: 4px;
+
+}
+
+
+.btn-watched
+{
+  display: block;
+  margin: 32px auto;
+
+  padding: 10px 16px;
+
+  background-color: orange;
+
+  color: white;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+}
+
+
+
