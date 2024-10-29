@@ -62,6 +62,7 @@ const MovieCard = ({movieId,handleBack,addToWatched,movieSearch}) => {
             setStars(watched.userRating)
         }
 
+
      }
     else
     {
@@ -75,9 +76,24 @@ const MovieCard = ({movieId,handleBack,addToWatched,movieSearch}) => {
 
     fetchMovie()
 
-
    },[movieId])
 
+
+    useEffect(() => {
+
+        if(!movie)
+            return
+
+       document.title = `Movie | ${movie.Title}`
+
+
+       return () => {
+        
+          document.title = "Vite + React"
+          
+        }
+
+    },[movie])
 
    if(status === "idle")
     return <p></p>
