@@ -101,7 +101,7 @@ export default function App() {
 
   const [query,setQuery] = useState("")
 
-  const [selectedMovie,setSelectedMovie] = useState(null)
+  const [selectedMovieID,setSelectedMovieID] = useState(null)
 
 
   const ENDPOINT = `https://www.omdbapi.com/?apikey=ce4c3ff2&s=${query}`
@@ -161,22 +161,14 @@ export default function App() {
   async function onSelect(imdbID)
   {
   
-      const endpoint = `https://www.omdbapi.com/?apikey=ce4c3ff2&i=${imdbID}`
-
-      console.log(endpoint)
-
-      const response = await fetch(endpoint)
-
-      const json = await response.json()
-
-      setSelectedMovie(json)
+      setSelectedMovieID(imdbID)
           
   }
 
 
   function handleBack()
   {
-     setSelectedMovie(null)
+     setSelectedMovieID(null)
 
   }
 
@@ -213,7 +205,7 @@ export default function App() {
       
       <Box>
       
-     { !selectedMovie &&
+     { !selectedMovieID &&
       <>
       <Summary watched={watched} />
       <WatchedMovieList watched={watched} />
@@ -222,9 +214,9 @@ export default function App() {
      }
 
      {
-       selectedMovie && 
+       selectedMovieID && 
 
-       <MovieCard movie = {selectedMovie} handleBack = {handleBack} addToWatched= {addToWatched}  />
+       <MovieCard movieId = {selectedMovieID} handleBack = {handleBack} />
      
      }
         

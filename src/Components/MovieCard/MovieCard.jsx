@@ -8,21 +8,90 @@ import StarRating from "../StarRating/StarRating";
 import { IoArrowBackCircle } from "react-icons/io5";
 
 import { FaCheckCircle } from "react-icons/fa";
+import { PiEnvelopeSimpleDuotone } from "react-icons/pi";
+
+import { ImSpinner } from "react-icons/im";
 
 
-
-const MovieCard = ({movie,handleBack,addToWatched}) => { 
+const MovieCard = ({movieId,handleBack}) => { 
  
    const [stars,setStars] = useState(0)
 
    const [watched,setWatched] = useState(false)
+
+   const [movie,setMovie] = useState(null)
+
+   // idle | loading | success | error 
+   const [status,setStatus] = useState("idle")
  
    useEffect(() => {
 
-     setStars(0)
-     setWatched(false)
+     
+    setStars(0)
+    setMovie(null)
 
-   },[movie])
+    setWatched(false)
+
+    const ENDPOINT = `https://www.omdbapi.com/?apikey=ce4c3ff2&i=${movieId}`
+
+    async function fetchMovie()
+    {
+
+      setStatus("loading")
+
+
+      await new Promise((resolve,reject) => {
+
+         setTimeout(() => {
+           resolve()
+
+         },1000)
+
+
+      })
+
+     const response = await fetch(ENDPOINT)
+
+     const json = await response.json()
+
+     if(json.Response)
+     {
+  
+        setStatus("success")
+
+        setMovie(json)
+
+     }
+    else
+    {
+
+        setStatus("error") 
+
+    }
+    
+
+    }
+
+    fetchMovie()
+
+
+   },[movieId])
+
+
+   if(status === "idle")
+    return <p></p>
+
+   if(status === "loading")
+   {
+      return <ImSpinner size={96} className= "spinner"/>
+   }
+
+
+   if(status === "error")
+   {
+      return <p>Something went wrong</p>
+
+   }
 
 
    return (

@@ -76,5 +76,12 @@ flex-grow: 2;
 
 }
 
+.spinner 
+{
+  display: block;
+  margin: 32px auto;
+
+}
+
 
 
