@@ -13,7 +13,7 @@ import { PiEnvelopeSimpleDuotone } from "react-icons/pi";
 import { ImSpinner } from "react-icons/im";
 
 
-const MovieCard = ({movieId,handleBack}) => { 
+const MovieCard = ({movieId,handleBack,addToWatched}) => { 
  
    const [stars,setStars] = useState(0)
 

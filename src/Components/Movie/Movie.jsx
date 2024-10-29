@@ -7,7 +7,7 @@ const Movie = ({movie,onClick}) => {
    return (
 
    
-    <li key={movie.imdbID}onClick={onClick}  >
+    <li key={movie.imdbID} onClick={onClick}  >
               <img src={movie.Poster} alt={`${movie.Title} poster`} />
               <div className="title-year-wrapper">
               <h3>{movie.Title}</h3>

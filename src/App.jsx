@@ -160,7 +160,11 @@ export default function App() {
 
   async function onSelect(imdbID)
   {
-  
+
+
+      if(imdbID === selectedMovieID)
+        setSelectedMovieID(null)
+      else
       setSelectedMovieID(imdbID)
           
   }
@@ -216,7 +220,7 @@ export default function App() {
      {
        selectedMovieID && 
 
-       <MovieCard movieId = {selectedMovieID} handleBack = {handleBack} />
+       <MovieCard movieId = {selectedMovieID} handleBack = {handleBack} addToWatched = {addToWatched}/>
      
      }
         
