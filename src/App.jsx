@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import "./App.css"
 import { PiPopcornDuotone } from "react-icons/pi";
 
@@ -72,8 +72,6 @@ const average = (arr) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
 
 
-
-
 function delay(time)
 {
 
@@ -81,8 +79,6 @@ function delay(time)
 
 
        setTimeout(() => {
-
-          console.log("manvitha")
 
           resolve()
 
@@ -133,7 +129,6 @@ export default function App() {
 
        setMovies(json.Search)
 
-       console.log(json.Search)
 
        setStatus("success")
 
@@ -180,11 +175,41 @@ export default function App() {
   function addToWatched(movie,userRating)
   {
     
-     
-      const nextWatched = [...watched,{imdbId : movie.imdbId,Title : movie.Title,Year : movie.Year, Poster : movie.Poster,runtime : movie.Runtime, imdbRating : movie.imdbRating, userRating : userRating}]
+      if(hasWatched(movie.imdbID))
+        return 
+
+      const nextWatched = [...watched,{imdbID : movie.imdbID,Title : movie.Title,Year : movie.Year, Poster : movie.Poster,runtime : movie.Runtime, imdbRating : movie.imdbRating, userRating : userRating}]
        
       setWatched(nextWatched)
       
+  }
+
+  function hasWatched(imdbID)
+  {
+
+    console.log(watched)
+
+    console.log(imdbID)
+
+    console.log("one iteration")
+
+
+     const movie = watched.find((watchedMovie) => {
+ 
+        return watchedMovie.imdbID === imdbID
+
+     })
+
+
+     console.log(movie)
+
+
+     if(movie)
+      return true
+    else
+    return false
+
+
   }
   
 
@@ -220,7 +245,7 @@ export default function App() {
      {
        selectedMovieID && 
 
-       <MovieCard movieId = {selectedMovieID} handleBack = {handleBack} addToWatched = {addToWatched}/>
+       <MovieCard movieId = {selectedMovieID} handleBack = {handleBack} addToWatched = {addToWatched} hasWatched ={hasWatched}/>
      
      }
         

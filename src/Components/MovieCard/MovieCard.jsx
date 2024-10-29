@@ -13,24 +13,23 @@ import { PiEnvelopeSimpleDuotone } from "react-icons/pi";
 import { ImSpinner } from "react-icons/im";
 
 
-const MovieCard = ({movieId,handleBack,addToWatched}) => { 
+const MovieCard = ({movieId,handleBack,addToWatched,hasWatched}) => { 
  
    const [stars,setStars] = useState(0)
 
-   const [watched,setWatched] = useState(false)
-
+   
    const [movie,setMovie] = useState(null)
 
    // idle | loading | success | error 
    const [status,setStatus] = useState("idle")
+
+   const watched = hasWatched(movieId)
  
    useEffect(() => {
 
      
     setStars(0)
     setMovie(null)
-
-    setWatched(false)
 
     const ENDPOINT = `https://www.omdbapi.com/?apikey=ce4c3ff2&i=${movieId}`
 
@@ -135,10 +134,21 @@ const MovieCard = ({movieId,handleBack,addToWatched}) => {
      <button disabled = {(watched)?(true):(false)}  onClick={() => {
 
        if(watched)
-        return
+       {
+          return
+       }
+
+      if(stars === 0)
+       {
+         window.alert("Please assign a valid rating")
+         return
+         
+      }
 
        addToWatched(movie,stars)
-       setWatched(true)
+
+       handleBack()
+       
 
      }}  className="btn-watched">{watched?(
 
