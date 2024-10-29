@@ -13,7 +13,7 @@ import { PiEnvelopeSimpleDuotone } from "react-icons/pi";
 import { ImSpinner } from "react-icons/im";
 
 
-const MovieCard = ({movieId,handleBack,addToWatched,hasWatched}) => { 
+const MovieCard = ({movieId,handleBack,addToWatched,movieSearch}) => { 
  
    const [stars,setStars] = useState(0)
 
@@ -23,13 +23,10 @@ const MovieCard = ({movieId,handleBack,addToWatched,hasWatched}) => {
    // idle | loading | success | error 
    const [status,setStatus] = useState("idle")
 
-   const watched = hasWatched(movieId)
- 
-   useEffect(() => {
+   const watched = movieSearch(movieId)
 
-     
-    setStars(0)
-    setMovie(null)
+   
+   useEffect(() => {
 
     const ENDPOINT = `https://www.omdbapi.com/?apikey=ce4c3ff2&i=${movieId}`
 
@@ -59,6 +56,11 @@ const MovieCard = ({movieId,handleBack,addToWatched,hasWatched}) => {
         setStatus("success")
 
         setMovie(json)
+
+        if(watched)
+        {
+            setStars(watched.userRating)
+        }
 
      }
     else

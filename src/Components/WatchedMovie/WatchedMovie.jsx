@@ -1,8 +1,11 @@
 import React from "react";
 import "./WatchedMovie.css"
 
+import { IoMdCloseCircleOutline } from "react-icons/io";
 
-const WatchedMovie = ({movie}) => {
+
+
+const WatchedMovie = ({movie,removeWatchedMovie}) => {
 
 
    return (
@@ -27,6 +30,13 @@ const WatchedMovie = ({movie}) => {
       </p>
     </div>
     </div>
+
+     <button className="close-btn" onClick={() => {
+
+         removeWatchedMovie(movie.imdbID)
+
+     }}>{<IoMdCloseCircleOutline />}</button>
+
   </li>
 
    )

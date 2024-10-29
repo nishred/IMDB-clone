@@ -175,8 +175,6 @@ export default function App() {
   function addToWatched(movie,userRating)
   {
     
-      if(hasWatched(movie.imdbID))
-        return 
 
       const nextWatched = [...watched,{imdbID : movie.imdbID,Title : movie.Title,Year : movie.Year, Poster : movie.Poster,runtime : movie.Runtime, imdbRating : movie.imdbRating, userRating : userRating}]
        
@@ -184,33 +182,39 @@ export default function App() {
       
   }
 
-  function hasWatched(imdbID)
+
+  function movieSearch(imdbID)
+  {
+ 
+    const movie = watched.find((watch) => {
+
+
+       return watch.imdbID === imdbID
+
+    })    
+ 
+
+    return movie
+
+  }
+
+
+  function removeWatchedMovie(imdbID)
   {
 
-    console.log(watched)
+     const nextWatched = watched.filter((watch) => {
 
-    console.log(imdbID)
+         return watch.imdbID!==imdbID
 
-    console.log("one iteration")
-
-
-     const movie = watched.find((watchedMovie) => {
- 
-        return watchedMovie.imdbID === imdbID
 
      })
 
 
-     console.log(movie)
-
-
-     if(movie)
-      return true
-    else
-    return false
+     setWatched(nextWatched)
 
 
   }
+
   
 
   return (
@@ -237,7 +241,7 @@ export default function App() {
      { !selectedMovieID &&
       <>
       <Summary watched={watched} />
-      <WatchedMovieList watched={watched} />
+      <WatchedMovieList watched={watched} removeWatchedMovie = {removeWatchedMovie} />
       </>
 
      }
@@ -245,7 +249,7 @@ export default function App() {
      {
        selectedMovieID && 
 
-       <MovieCard movieId = {selectedMovieID} handleBack = {handleBack} addToWatched = {addToWatched} hasWatched ={hasWatched}/>
+       <MovieCard movieId = {selectedMovieID} handleBack = {handleBack} addToWatched = {addToWatched} movieSearch = {movieSearch}/>
      
      }
         

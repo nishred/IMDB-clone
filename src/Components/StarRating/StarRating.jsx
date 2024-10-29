@@ -14,20 +14,18 @@ const StarRating = ({defaultStars,setStars,className,maxRating = 10,size = 48,co
 
     useEffect(() => {
 
-        setStars(shine)
+       setShine(defaultStars)
 
-
-    },[shine,setStars])
+    },[defaultStars])
 
 
     useEffect(() => {
 
-        setShine(defaultStars)
+       setStars(shine)
+
+    },[shine])  
 
 
-    },[defaultStars])
-
-    
     function handleClick(idx)
     {
 

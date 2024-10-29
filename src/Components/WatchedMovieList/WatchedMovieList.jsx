@@ -4,7 +4,7 @@ import "./WatchedMovieList.css"
 import WatchedMovie from "../WatchedMovie/WatchedMovie";
 
 
-const WatchedMovieList = ({watched}) => {
+const WatchedMovieList = ({watched,removeWatchedMovie}) => {
 
 
     return (
@@ -14,7 +14,7 @@ const WatchedMovieList = ({watched}) => {
             
              {watched.map((movie) => {
 
-                  return (<WatchedMovie key={movie.id}  movie={movie} />)
+                  return (<WatchedMovie key={movie.imdbID}  movie={movie} removeWatchedMovie = {removeWatchedMovie}/>)
 
              })}
 
