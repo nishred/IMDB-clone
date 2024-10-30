@@ -191,11 +191,9 @@ export default function App() {
  
     const movie = watched.find((watch) => {
 
-
        return watch.imdbID === imdbID
 
     })    
- 
 
     return movie
 

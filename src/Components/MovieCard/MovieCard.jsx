@@ -41,13 +41,13 @@ const MovieCard = ({movieId,handleBack,addToWatched,movieSearch}) => {
     }
 
 
-    window.addEventListener("keydown",handleKeyPress)
+    document.addEventListener("keydown",handleKeyPress)
 
    
     return () => {
 
 
-      window.removeEventListener("keydown",handleKeyPress)
+      document.removeEventListener("keydown",handleKeyPress)
 
     }
 
