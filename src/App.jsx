@@ -74,10 +74,26 @@ const average = (arr) =>
 
 
 export default function App() {
-
+  
   const [movies,setMovies] = useState([])
 
-  const [watched,setWatched] = useState(tempWatchedData)
+  const [watched,setWatched] = useState(() => {
+
+      const localWatched = window.localStorage.getItem("watched")
+
+     if(localWatched)
+     {
+
+        return JSON.parse(localWatched)     
+
+     }
+     else
+     {
+      return tempWatchedData
+     }
+
+
+  })
 
   const [query,setQuery] = useState("")
 
@@ -88,72 +104,118 @@ export default function App() {
 
 
 
+  // useEffect(() => {
+
+  //   const controller = new AbortController()
+
+  //   const ENDPOINT = `https://www.omdbapi.com/?apikey=ce4c3ff2&s=${query}`
+    
+  //    async function fetchData()
+  //    {
+
+  //      setStatus("loading")
+
+  //      try{
+
+  //      const response = await fetch(ENDPOINT,{signal : controller.signal})
+
+  //      const json = await response.json()
+
+  //      if(!json.Response)
+  //      {
+  //       setStatus("error")
+  //       return
+  //      }
+
+  //      setMovies(json.Search)
+
+  //      setStatus("success")
+  //    }
+  //    catch(err)
+  //    {
+
+  //      if(err.name !== "AbortError")
+  //      {
+  //         setStatus("error")
+
+  //      }
+
+  //    }
+
+  //   }
+
+
+  //    fetchData()
+
+
+  //    return () => {
+
+  //      controller.abort()
+
+  //    }
+     
+
+  // },[query])
+
+
+
+
   useEffect(() => {
 
-    const controller = new AbortController()
 
-    const ENDPOINT = `https://www.omdbapi.com/?apikey=ce4c3ff2&s=${query}`
-    
-     async function fetchData()
+     const controller = new AbortController()
+     const ENDPOINT = `https://www.omdbapi.com/?apikey=ce4c3ff2&s=${query}`
+
+
+     async function fetchMovies()
      {
 
-       setStatus("loading")
+      setStatus("loading")
 
-       try{
+      const response = await fetch(ENDPOINT,{signal : controller.signal})
 
-       const response = await fetch(ENDPOINT,{signal : controller.signal})
+      const json = await response.json()
 
-       const json = await response.json()
+      if(!json.Response)
+      {
+         setStatus("error")
 
-       if(!json.Response)
-       {
-        setStatus("error")
+      }
+      else
+      {
+ 
+          setMovies(json.Search)
+          
+          setStatus("success")
+
+      }
+      
+
+
+     }
+
+
+     if(query.length < 3)
+     {
+        setStatus("idle")
         return
-       }
-
-       setMovies(json.Search)
-
-       setStatus("success")
-     }
-     catch(err)
-     {
-
-       if(err.name !== "AbortError")
-       {
-          setStatus("error")
-
-       }
-
      }
 
-    }
 
-
-     fetchData()
-
+     fetchMovies()
 
      return () => {
 
-       controller.abort()
+        controller.abort()
 
      }
-     
+
+
 
   },[query])
 
 
   
-  if(status === "loading")
-  {
-     return (<p>Loading...</p>)
-
-  }
-
-
-  if(status === "error")
-  {
-    return <p>Something went wrong</p>
-  }
 
 
   async function onSelect(imdbID)
@@ -182,6 +244,8 @@ export default function App() {
       const nextWatched = [...watched,{imdbID : movie.imdbID,Title : movie.Title,Year : movie.Year, Poster : movie.Poster,runtime : movie.Runtime, imdbRating : movie.imdbRating, userRating : userRating}]
        
       setWatched(nextWatched)
+
+      window.localWatched.setItem("watched",JSON.stringify(nextWatched))
       
   }
 
@@ -220,7 +284,7 @@ export default function App() {
       <NavBar>
       
       <Logo />
-      <Search setQuery={setQuery}/>
+      <Search query = {query}  setQuery={setQuery}/>
       <SearchResults results = {movies?.length}/>
 
       </NavBar>
@@ -229,7 +293,8 @@ export default function App() {
       
       <Box>
       
-      <MovieList onSelect = {onSelect}  movies={movies} />
+      {(status === "loading") && <p>Loading</p>}
+      {(status === "success") && <MovieList onSelect = {onSelect}  movies={movies} />}
       
       </Box>
       

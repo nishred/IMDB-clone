@@ -17,7 +17,6 @@ const MovieCard = ({movieId,handleBack,addToWatched,movieSearch}) => {
  
    const [stars,setStars] = useState(0)
 
-   
    const [movie,setMovie] = useState(null)
 
    // idle | loading | success | error 
