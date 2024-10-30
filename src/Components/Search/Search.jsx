@@ -1,26 +1,22 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./Search.css"
 
 
-const Search = ({query,setQuery}) => {
+const Search = ({setQuery}) => {
 
-
-   const [state,setState] = useState(query)
+   const [state,setState] = useState("")
 
 
    return (
 
 
-    <form onSubmit={(e) => {
+     <form onSubmit={(e) => {
 
+       e.preventDefault()
+       setQuery(state)
 
-      e.preventDefault()
-
-
-      setQuery(state)
-
-    }}>  
-    <input
+     }}> 
+    <input 
           className="search"
           type="text"
           placeholder="Search movies..."
@@ -28,9 +24,7 @@ const Search = ({query,setQuery}) => {
           onChange={(e) => setState(e.target.value)}
         />
 
-     </form>   
-
-
+      </form>  
 
    )
 

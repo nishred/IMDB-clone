@@ -72,22 +72,6 @@ const average = (arr) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
 
 
-function delay(time)
-{
-
-    return new Promise((resolve,reject) => {
-
-
-       setTimeout(() => {
-
-          resolve()
-
-       },time)
-
-    })
-
-}
-
 
 export default function App() {
 
@@ -99,25 +83,25 @@ export default function App() {
 
   const [selectedMovieID,setSelectedMovieID] = useState(null)
 
-
-  const ENDPOINT = `https://www.omdbapi.com/?apikey=ce4c3ff2&s=${query}`
-
-
-
   // idle | loading | success | error
   const [status,setStatus] = useState("idle")
 
 
+
   useEffect(() => {
 
+    const controller = new AbortController()
+
+    const ENDPOINT = `https://www.omdbapi.com/?apikey=ce4c3ff2&s=${query}`
     
      async function fetchData()
      {
 
-   
        setStatus("loading")
 
-       const response = await fetch(ENDPOINT)
+       try{
+
+       const response = await fetch(ENDPOINT,{signal : controller.signal})
 
        const json = await response.json()
 
@@ -129,15 +113,34 @@ export default function App() {
 
        setMovies(json.Search)
 
-
        setStatus("success")
+     }
+     catch(err)
+     {
+
+       if(err.name !== "AbortError")
+       {
+          setStatus("error")
+
+       }
 
      }
 
+    }
+
+
      fetchData()
+
+
+     return () => {
+
+       controller.abort()
+
+     }
      
 
   },[query])
+
 
   
   if(status === "loading")
@@ -206,16 +209,12 @@ export default function App() {
 
          return watch.imdbID!==imdbID
 
-
      })
-
 
      setWatched(nextWatched)
 
-
   }
 
-  
 
   return (
     <>
@@ -223,7 +222,7 @@ export default function App() {
       <NavBar>
       
       <Logo />
-      <Search query={query} setQuery={setQuery}/>
+      <Search setQuery={setQuery}/>
       <SearchResults results = {movies?.length}/>
 
       </NavBar>

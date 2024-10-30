@@ -25,6 +25,34 @@ const MovieCard = ({movieId,handleBack,addToWatched,movieSearch}) => {
 
    const watched = movieSearch(movieId)
 
+
+   useEffect(() => {
+
+   
+    function handleKeyPress(e)
+    {
+
+       if(e.code === "Escape")
+       {
+            handleBack()
+
+       }
+
+    }
+
+
+    window.addEventListener("keydown",handleKeyPress)
+
+   
+    return () => {
+
+
+      window.removeEventListener("keydown",handleKeyPress)
+
+    }
+
+   },[handleBack])
+
    
    useEffect(() => {
 
