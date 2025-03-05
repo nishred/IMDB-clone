@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import "./App.css"
+import "./App.css";
 import { PiPopcornDuotone } from "react-icons/pi";
 
 import Main from "./Components/Main/Main";
@@ -20,6 +20,8 @@ import Search from "./Components/Search/Search";
 import SearchResults from "./Components/SearchResults/SearchResults";
 import MovieCard from "./Components/MovieCard/MovieCard";
 import Movie from "./Components/Movie/Movie";
+
+import { useDebounce } from "./hooks/useDebounce";
 
 const tempMovieData = [
   {
@@ -71,45 +73,34 @@ const tempWatchedData = [
 const average = (arr) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
 
-
-
 export default function App() {
-  
-  const [movies,setMovies] = useState([])
+  const [movies, setMovies] = useState([]);
 
-  const [watched,setWatched] = useState(() => {
+  const [watched, setWatched] = useState(() => {
+    const localWatched = window.localStorage.getItem("watched");
 
-      const localWatched = window.localStorage.getItem("watched")
+    if (localWatched) {
+      return JSON.parse(localWatched);
+    } else {
+      return tempWatchedData;
+    }
+  });
 
-     if(localWatched)
-     {
+  const [query, setQuery] = useState("");
 
-        return JSON.parse(localWatched)     
-
-     }
-     else
-     {
-      return tempWatchedData
-     }
-
-
-  })
-
-  const [query,setQuery] = useState("")
-
-  const [selectedMovieID,setSelectedMovieID] = useState(null)
+  const [selectedMovieID, setSelectedMovieID] = useState(null);
 
   // idle | loading | success | error
-  const [status,setStatus] = useState("idle")
+  const [status, setStatus] = useState("idle");
 
-
+  const search = useDebounce(query, 1000);
 
   // useEffect(() => {
 
   //   const controller = new AbortController()
 
   //   const ENDPOINT = `https://www.omdbapi.com/?apikey=ce4c3ff2&s=${query}`
-    
+
   //    async function fetchData()
   //    {
 
@@ -144,185 +135,148 @@ export default function App() {
 
   //   }
 
-
   //    fetchData()
-
 
   //    return () => {
 
   //      controller.abort()
 
   //    }
-     
 
   // },[query])
 
+  // useEffect(() => {
+  //   const controller = new AbortController();
+  //   const ENDPOINT = `https://www.omdbapi.com/?apikey=ce4c3ff2&s=${query}`;
 
+  //   async function fetchMovies() {
+  //     setStatus("loading");
 
+  //     const response = await fetch(ENDPOINT, { signal: controller.signal });
+
+  //     const json = await response.json();
+
+  //     if (!json.Response) {
+  //       setStatus("error");
+  //     } else {
+  //       setMovies(json.Search);
+
+  //       setStatus("success");
+  //     }
+  //   }
+
+  //   if (query.length < 3) {
+  //     setStatus("idle");
+  //     return;
+  //   }
+
+  //   fetchMovies();
+
+  //   return () => {
+  //     controller.abort();
+  //   };
+  // }, [query]);
 
   useEffect(() => {
+    const ENDPOINT = `https://www.omdbapi.com/?apikey=ce4c3ff2&s=${search}`;
 
+    async function fetchMovies() {
+      const response = await fetch(ENDPOINT);
 
-     const controller = new AbortController()
-     const ENDPOINT = `https://www.omdbapi.com/?apikey=ce4c3ff2&s=${query}`
+      const json = await response.json();
 
-
-     async function fetchMovies()
-     {
-
-      setStatus("loading")
-
-      const response = await fetch(ENDPOINT,{signal : controller.signal})
-
-      const json = await response.json()
-
-      if(!json.Response)
-      {
-         setStatus("error")
-
+      if (!json.Response) {
+        setStatus("error");
+      } else {
+        setStatus("success");
+        setMovies(json.Search);
       }
-      else
+    }
+
+    fetchMovies();
+  }, [search]);
+
+  async function onSelect(imdbID) {
+    if (imdbID === selectedMovieID) setSelectedMovieID(null);
+    else setSelectedMovieID(imdbID);
+  }
+
+  function handleBack() {
+    setSelectedMovieID(null);
+  }
+
+  function addToWatched(movie, userRating) {
+    const nextWatched = [
+      ...watched,
       {
- 
-          setMovies(json.Search)
-          
-          setStatus("success")
+        imdbID: movie.imdbID,
+        Title: movie.Title,
+        Year: movie.Year,
+        Poster: movie.Poster,
+        runtime: movie.Runtime,
+        imdbRating: movie.imdbRating,
+        userRating: userRating,
+      },
+    ];
 
-      }
-      
+    setWatched(nextWatched);
 
-
-     }
-
-
-     if(query.length < 3)
-     {
-        setStatus("idle")
-        return
-     }
-
-
-     fetchMovies()
-
-     return () => {
-
-        controller.abort()
-
-     }
-
-
-
-  },[query])
-
-
-  
-
-
-  async function onSelect(imdbID)
-  {
-
-
-      if(imdbID === selectedMovieID)
-        setSelectedMovieID(null)
-      else
-      setSelectedMovieID(imdbID)
-          
+    window.localStorage.setItem("watched", JSON.stringify(nextWatched));
   }
 
-
-  function handleBack()
-  {
-     setSelectedMovieID(null)
-
-  }
-
-
-  function addToWatched(movie,userRating)
-  {
-    
-
-      const nextWatched = [...watched,{imdbID : movie.imdbID,Title : movie.Title,Year : movie.Year, Poster : movie.Poster,runtime : movie.Runtime, imdbRating : movie.imdbRating, userRating : userRating}]
-       
-      setWatched(nextWatched)
-
-      window.localWatched.setItem("watched",JSON.stringify(nextWatched))
-      
-  }
-
-
-  function movieSearch(imdbID)
-  {
- 
+  function movieSearch(imdbID) {
     const movie = watched.find((watch) => {
+      return watch.imdbID === imdbID;
+    });
 
-       return watch.imdbID === imdbID
-
-    })    
-
-    return movie
-
+    return movie;
   }
 
+  function removeWatchedMovie(imdbID) {
+    const nextWatched = watched.filter((watch) => {
+      return watch.imdbID !== imdbID;
+    });
 
-  function removeWatchedMovie(imdbID)
-  {
-
-     const nextWatched = watched.filter((watch) => {
-
-         return watch.imdbID!==imdbID
-
-     })
-
-     setWatched(nextWatched)
-
+    setWatched(nextWatched);
   }
-
 
   return (
     <>
-  
       <NavBar>
-      
-      <Logo />
-      <Search query = {query}  setQuery={setQuery}/>
-      <SearchResults results = {movies?.length}/>
-
+        <Logo />
+        <Search query={query} setQuery={setQuery} />
+        <SearchResults results={movies?.length} />
       </NavBar>
 
       <Main>
-      
-      <Box>
-      
-      {(status === "loading") && <p>Loading</p>}
-      {(status === "success") && <MovieList onSelect = {onSelect}  movies={movies} />}
-      
-      </Box>
-      
-      <Box>
-      
-     { !selectedMovieID &&
-      <>
-      <Summary watched={watched} />
-      <WatchedMovieList watched={watched} removeWatchedMovie = {removeWatchedMovie} />
-      </>
+        <Box>
+          {status === "loading" && <p>Loading</p>}
+          {status === "success" && (
+            <MovieList onSelect={onSelect} movies={movies} />
+          )}
+        </Box>
 
-     }
+        <Box>
+          {!selectedMovieID && (
+            <>
+              <Summary watched={watched} />
+              <WatchedMovieList
+                watched={watched}
+                removeWatchedMovie={removeWatchedMovie}
+              />
+            </>
+          )}
 
-     {
-       selectedMovieID && 
-
-       <MovieCard movieId = {selectedMovieID} handleBack = {handleBack} addToWatched = {addToWatched} movieSearch = {movieSearch}/>
-     
-     }
-        
-
-      </Box>
-
+          {selectedMovieID && (
+            <MovieCard
+              movieId={selectedMovieID}
+              handleBack={handleBack}
+              addToWatched={addToWatched}
+              movieSearch={movieSearch}
+            />
+          )}
+        </Box>
       </Main>
-
-
     </>
   );
 }
-
-
